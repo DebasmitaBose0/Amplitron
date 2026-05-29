@@ -58,6 +58,22 @@ TEST_F(EffectsTest, reverb_bypass_passes_signal_unchanged) {
     }
 }
 
+TEST_F(EffectsTest, reverb_zero_mix_passes_signal_unchanged) {
+    Reverb rv;
+    rv.set_sample_rate(SR);
+    rv.reset();
+    rv.params()[2].value = 0.0f;
+
+    fill_sine(440.0f);
+    copy_input_to_output();
+
+    rv.process(input_buffer, BUFFER_SIZE);
+
+    for (int i = 0; i < BUFFER_SIZE; ++i) {
+        ASSERT_NEAR(input_buffer[i], output_buffer[i], 1e-6f);
+    }
+}
+
 TEST_F(EffectsTest, reverb_reset_clears_tail) {
     Reverb rv;
     rv.set_sample_rate(SR);

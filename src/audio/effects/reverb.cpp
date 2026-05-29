@@ -63,6 +63,8 @@ void Reverb::process(float* buffer, int num_samples) {
     float damp = params_[1].value;
     float level = params_[2].value;
 
+    if (level <= 0.0f) return;
+
     for (int i = 0; i < num_samples; ++i) {
         float dry = buffer[i];
         float input = buffer[i] * 0.2f;
@@ -111,6 +113,10 @@ void Reverb::process_stereo(float* left, float* right, int num_samples) {
     const float decay = params_[0].value;
     const float damp  = params_[1].value;
     const float level = params_[2].value;
+
+    if (level <= 0.0f) {
+        return;
+    }
 
     for (int i = 0; i < num_samples; ++i) {
         const float input_l = left[i]  * 0.2f;
