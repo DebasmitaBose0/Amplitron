@@ -1531,3 +1531,25 @@ TEST(PresetManagerIO, SavePresetIncludesCabinetIrMetadata) {
     std::remove(ir_path.c_str());
     engine.shutdown();
 }
+
+TEST(PresetManagerSecurity, SavePresetRejectsPathTraversal) {
+    AudioEngine engine;
+    engine.initialize();
+
+    std::string bad_path = "presets/../../traversal_test.json";
+    bool ok = PresetManager::save_preset(bad_path, "Hack", "desc", engine);
+    ASSERT_FALSE(ok);
+
+    engine.shutdown();
+}
+
+TEST(PresetManagerSecurity, LoadPresetRejectsPathTraversal) {
+    AudioEngine engine;
+    engine.initialize();
+
+    std::string bad_path = "presets/../../traversal_test.json";
+    bool ok = PresetManager::load_preset(bad_path, engine);
+    ASSERT_FALSE(ok);
+
+    engine.shutdown();
+}

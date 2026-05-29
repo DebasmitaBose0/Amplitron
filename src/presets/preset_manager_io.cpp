@@ -26,6 +26,13 @@ std::vector<std::string> PresetManager::list_presets() {
 
 bool PresetManager::save_preset_data(const std::string &filepath,
                                      const PresetData &preset) {
+  // Prevent path traversal attempts
+  if (filepath.find("..") != std::string::npos) {
+    last_error_ = "Security Error: Path traversal attempt detected: " + filepath;
+    std::cerr << last_error_ << std::endl;
+    return false;
+  }
+
   std::string json = to_json_ext(preset);
 
   std::ofstream file(filepath);
@@ -135,6 +142,13 @@ bool PresetManager::save_preset(const std::string &filepath,
 bool PresetManager::load_preset(const std::string &filepath,
                                 AudioEngine &engine,
                                 MidiManager *midi_manager) {
+  // Prevent path traversal attempts
+  if (filepath.find("..") != std::string::npos) {
+    last_error_ = "Security Error: Path traversal attempt detected: " + filepath;
+    std::cerr << last_error_ << std::endl;
+    return false;
+  }
+
   std::ifstream file(filepath);
   if (!file.is_open()) {
     last_error_ = "Could not open file: " + filepath;
